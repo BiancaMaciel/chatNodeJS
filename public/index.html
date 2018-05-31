@@ -93,8 +93,14 @@
         }
 
         socket.on('receivedMessage', function(message) {
-            renderMessage(message)
+            renderMessage(message);
         }); //recebe as mensagens digitadas por outros usuários
+
+        socket.on('previousMessages', function(messages){
+            for (message of messages) {
+                renderMessage(message);
+            }
+        });
 
         $('#chat').submit(function (e) {
             e.preventDefault();
