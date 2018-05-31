@@ -1,0 +1,28 @@
+{
+  "name": "package",
+  "version": "1.0.0",
+  "description": "Chat NodeJS",
+  "main": "\u001b[D",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/karenyov/chatNodeJS.git"
+  },
+  "keywords": [
+    "chat",
+    "notejs"
+  ],
+  "author": "Karen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/karenyov/chatNodeJS/issues"
+  },
+  "homepage": "https://github.com/karenyov/chatNodeJS#readme",
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "socket.io": "^2.1.1"
+  }
+}

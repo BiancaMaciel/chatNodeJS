@@ -1,0 +1,118 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+
+</head>
+
+<body>
+    <div class="container" style="margin-top: 30px; background: #f7f7f7">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6">
+                        <div style="text-align:center;">
+                            <h2>Chat NodeJS</h2>
+                            <hr>
+                        </div>
+                        <form id="chat">
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="username" placeholder="Digite seu usuário" required>
+                            </div>
+
+                            <div class="form-group" style="background: white;">
+                                <div class="messages col-md-12">
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="message" placeholder="Digite sua mensagem" required>
+                            </div>
+
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-warning btn-lg btn-block">Enviar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var socket = io('http://localhost:3000');
+
+        function renderMessage(message) {
+            var infoCss = '';
+            var iconDateClass = '';
+            var colorAuthor = '';
+            if (message.author == $('input[name=username]').val()) { //mensagem do próprio usuário
+                infoCss = 'text-align:right;';
+                iconDateClass = 'pull-left ';
+                colorAuthor = 'text-warning';
+            } else
+                iconDateClass = 'pull-right ';
+            
+            var html =
+                '<div class="row">' +
+                    '<div class="col-md-12">' +
+                        '<small><i id="icon-date" class="fa fa-clock-o ' + iconDateClass +  '" aria-hidden="true"> ' + message.date + '</i></small>' +
+                        '<div id="info-message" style="'+ infoCss +'">' +
+                            '<h5 class="'+ colorAuthor +'">' + message.author + '</h5>' +
+                            '<p>' + message.author + '</p>' +
+                        '</div>' +
+                    '</div>' +
+                '</div><hr>';
+            $('.messages').append(html);
+        }
+
+        /**
+         * Função para pegar a data que foi enviado a mensagem
+         * */
+        function getDate() {
+            var date = new Date;
+            var seconds = date.getSeconds();
+            var minutes = date.getMinutes();
+            var hour = date.getHours();
+            var year = date.getFullYear();
+            var month = date.getMonth(); // beware: January = 0; February = 1, etc.
+            var day = date.getDate();
+            return day + '/' + month + '/' + year + ' ' + hour + ':' + minutes + ':' + seconds;
+        }
+
+        socket.on('receivedMessage', function(message) {
+            renderMessage(message)
+        }); //recebe as mensagens digitadas por outros usuários
+
+        $('#chat').submit(function (e) {
+            e.preventDefault();
+
+            var author = $('input[name=username]').val();
+            var message = $('input[name=message]').val();
+
+            if (author.length && message.length) {
+                var messageObject = {
+                    author: author,
+                    message: message,
+                    date: getDate(),
+                };
+                renderMessage(messageObject);
+                socket.emit('sendMessage', messageObject);
+            }
+        });
+    </script>
+</body>
+
+</html>
